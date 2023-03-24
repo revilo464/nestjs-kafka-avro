@@ -9,6 +9,6 @@
       "type": "string"
     }
   ],
-  "name": "userRecord",
+  "name": "createUserRecord",
   "type": "record"
 }

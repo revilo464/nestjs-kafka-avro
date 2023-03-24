@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User, UserAvro } from './entities/users.entity';
+import { User } from './entities/users.entity';
 import { KafkaService, SubscribeTo } from '@rob3000/nestjs-kafka';
 import { RecordMetadata } from 'kafkajs';
 
-export const USERS_ADDED_TOPIC = 'todo.users.added';
+export const USERS_ADDED_TOPIC = 'messenger.users.added';
 
 @Injectable()
 export class UsersService {
@@ -24,26 +24,25 @@ export class UsersService {
 
   createUser(createUserDto: CreateUserDto): User {
     const newUser = { id: this.lastInsert++, ...createUserDto };
-    this.produceUserAddedEvent(newUser);
     this.users.push(newUser);
+    this.produceUserAddedEvent(newUser);
     return newUser;
   }
 
   async produceUserAddedEvent(newUser: User): Promise<RecordMetadata[]> {
-    const result = await this.client.send({
+    return await this.client.send({
       topic: USERS_ADDED_TOPIC,
       messages: [
         {
-          key: newUser,
+          key: { createdAt: new Date().getTime() },
           value: newUser,
         },
       ],
     });
-    return result;
   }
 
   @SubscribeTo(USERS_ADDED_TOPIC)
-  async getWorld(data: any, key: any): Promise<void> {
-    console.log(data);
+  async handleUserAddedEvent(data: any): Promise<void> {
+    console.log('User added event received: ' + data);
   }
 }

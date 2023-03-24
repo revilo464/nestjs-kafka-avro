@@ -29,19 +29,19 @@ import { MESSAGE_SENT_TOPIC } from './messages/messages.service';
           }),
           serializer: new KafkaAvroRequestSerializer({
             options: undefined,
-            // schemaFetchIntervalSeconds: 0,
-            // schemaSeparator: '',
             config: {
               host: 'http://localhost:8081/',
             },
             schemas: [
               {
                 topic: USERS_ADDED_TOPIC,
+                key: __dirname + 'users/avro/create-user-key.avsc',
                 value: __dirname + 'users/avro/create-user.avsc',
               },
               {
                 topic: MESSAGE_SENT_TOPIC,
-                value: __dirname + 'users/avro/create-user.avsc',
+                key: __dirname + 'users/avro/create-message-key.avsc',
+                value: __dirname + 'messages/avro/create-message.avsc',
               },
             ],
           }),

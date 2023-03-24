@@ -3,23 +3,28 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  Inject,
+  NotFoundException,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { UsersService } from '../users/users.service';
 
 @ApiTags('messages')
 @Controller('messages')
 export class MessagesController {
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(
+    private readonly messagesService: MessagesService,
+    @Inject(UsersService) private usersService: UsersService,
+  ) {}
 
   @Post()
   create(@Body() createMessageDto: CreateMessageDto) {
-    return this.messagesService.create(createMessageDto);
+    const user = this.usersService.findById(createMessageDto.userId);
+    if (!user) throw new NotFoundException({ message: 'User not found!' });
+    return this.messagesService.createMessage(createMessageDto);
   }
 
   @Get()
@@ -30,10 +35,5 @@ export class MessagesController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.messagesService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.messagesService.remove(+id);
   }
 }

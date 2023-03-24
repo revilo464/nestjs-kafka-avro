@@ -1,0 +1,10 @@
+{
+  "fields": [
+    {
+      "name": "createdAt",
+      "type": "long"
+    }
+  ],
+  "name": "createMessageKeyRecord",
+  "type": "record"
+}

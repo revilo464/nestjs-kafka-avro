@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class Message {
-  constructor(id: number, userId: number, text: string, created: number) {
+  constructor(id: number, userId: number, text: string, createdAt: number) {
     this.id = id;
     this.userId = userId;
     this.text = text;
-    this.created = created;
+    this.createdAt = createdAt;
   }
 
   @ApiProperty()
@@ -18,5 +18,5 @@ export class Message {
   text: string;
 
   @ApiProperty()
-  created: number;
+  createdAt: number;
 }
